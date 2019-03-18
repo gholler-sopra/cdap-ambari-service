@@ -43,7 +43,7 @@ for p in ${PACKAGE_FORMATS} ; do
         --depends "python > 2.6" \
         --depends "ambari-server > 2.2" \
         --version ${PACKAGE_VERSION} \
-        --iteration ${PACKAGE_ITERATION} \
+        --iteration ${RELEASE} \
         ${DEB_FPM_ARGS} \
         -C ../build \
         var
