@@ -2906,6 +2906,45 @@
   </property>
 
   <property>
+    <name>security.authentication.knox.token.public.key</name>
+    <value>key_value</value>
+    <description>
+      Enables key to set KNOX_TOKEN_PUBLIC_KEY
+    </description>
+    <display-name>Knox Token Public Key</display-name>
+    <value-attributes>
+      <type>boolean</type>
+      <overridable>true</overridable>
+    </value-attributes>
+  </property>
+
+  <property>
+    <name>security.authentication.knox.host.value</name>
+    <value>0.0.0.0</value>
+    <description>
+      Knox host value
+    </description>
+    <display-name>Knox Host Value</display-name>
+    <value-attributes>
+      <type>boolean</type>
+      <overridable>true</overridable>
+    </value-attributes>
+  </property>
+
+  <property>
+    <name>security.authentication.knox.post.value</name>
+    <value>8443</value>
+    <description>
+      Knox port value
+    </description>
+    <display-name>Knox Port Value</display-name>
+    <value-attributes>
+      <type>boolean</type>
+      <overridable>true</overridable>
+    </value-attributes>
+  </property>
+
+  <property>
     <name>kerberos.auth.enabled</name>
     <value>false</value>
     <description>
