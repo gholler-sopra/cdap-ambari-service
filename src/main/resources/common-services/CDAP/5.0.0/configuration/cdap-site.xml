@@ -2912,9 +2912,14 @@
       Enables key to set KNOX_TOKEN_PUBLIC_KEY
     </description>
     <display-name>Knox Token Public Key</display-name>
+    <depends-on>
+      <property>
+        <type>cdap-site</type>
+        <name>security.enabled</name>
+      </property>
+    </depends-on>
     <value-attributes>
-      <type>boolean</type>
-      <overridable>true</overridable>
+      <empty-value-valid>true</empty-value-valid>
     </value-attributes>
   </property>
 
@@ -2925,9 +2930,14 @@
       Knox host value
     </description>
     <display-name>Knox Host Value</display-name>
+    <depends-on>
+      <property>
+        <type>cdap-site</type>
+        <name>security.enabled</name>
+      </property>
+    </depends-on>
     <value-attributes>
-      <type>boolean</type>
-      <overridable>true</overridable>
+      <empty-value-valid>true</empty-value-valid>
     </value-attributes>
   </property>
 
@@ -2938,9 +2948,14 @@
       Knox port value
     </description>
     <display-name>Knox Port Value</display-name>
+    <depends-on>
+      <property>
+        <type>cdap-site</type>
+        <name>security.enabled</name>
+      </property>
+    </depends-on>
     <value-attributes>
-      <type>boolean</type>
-      <overridable>true</overridable>
+      <empty-value-valid>true</empty-value-valid>
     </value-attributes>
   </property>
 
