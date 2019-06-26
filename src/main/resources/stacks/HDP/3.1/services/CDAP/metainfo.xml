@@ -19,24 +19,8 @@
   <services>
     <service>
       <name>CDAP</name>
-
-      <components>
-        <component>
-          <name>CDAP_MASTER</name>
-          <dependencies>
-            <dependency>
-              <name>TEZ/TEZ_CLIENT</name>
-              <scope>host</scope>
-              <auto-deploy>
-                <enabled>true</enabled>
-              </auto-deploy>
-            </dependency>
-          </dependencies>
-        </component>
-      </components>
-      <configuration-dependencies>
-        <config-type>tez-site</config-type>
-      </configuration-dependencies>
+      <extends>common-services/CDAP/5.0.0</extends>
+      <version>REPLACE_ME</version>
     </service>
   </services>
 </metainfo>
