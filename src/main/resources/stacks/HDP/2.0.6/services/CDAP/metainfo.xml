@@ -20,7 +20,7 @@
     <service>
       <name>CDAP</name>
       <extends>common-services/CDAP/5.0.0</extends>
-      <version>3.1</version>
+      <version>REPLACE_ME</version>
     </service>
   </services>
 </metainfo>
