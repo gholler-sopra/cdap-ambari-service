@@ -1,0 +1,474 @@
+<?xml version="1.0"?>
+<!--
+   Copyright © 2015-2017 Cask Data, Inc.
+
+   Licensed under the Apache License, Version 2.0 (the "License"); you may not
+   use this file except in compliance with the License. You may obtain a copy of
+   the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+   WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+   License for the specific language governing permissions and limitations under
+   the License.
+-->
+<metainfo>
+  <schemaVersion>2.0</schemaVersion>
+  <services>
+    <service>
+      <name>CDAP</name>
+      <displayName>CDAP</displayName>
+      <comment>
+        The Cask Data Application Platform (CDAP) is an easy-to-use, open source and enterprise-ready integrated platform
+        for organizations to build, deploy, and operate data-driven applications.
+      </comment>
+      <version>5.0.0</version>
+
+      <components>
+
+        <component>
+          <!-- CDAP CLI -->
+          <name>CDAP_CLI</name>
+          <displayName>CDAP CLI Client</displayName>
+          <category>CLIENT</category>
+          <cardinality>1+</cardinality>
+          <commandScript>
+            <script>scripts/cli.py</script>
+            <scriptType>PYTHON</scriptType>
+            <timeout>1800</timeout>
+          </commandScript>
+          <configFiles>
+            <configFile>
+              <type>xml</type>
+              <fileName>cdap-site.xml</fileName>
+              <dictionaryName>cdap-site</dictionaryName>
+            </configFile>
+          </configFiles>
+        </component>
+
+        <component>
+          <!-- CDAP Master -->
+          <name>CDAP_MASTER</name>
+          <displayName>CDAP Master</displayName>
+          <category>MASTER</category>
+          <cardinality>1+</cardinality>
+          <timelineAppid>CDAP</timelineAppid>
+          <commandScript>
+            <script>scripts/master.py</script>
+            <scriptType>PYTHON</scriptType>
+            <timeout>1800</timeout>
+          </commandScript>
+          <configFiles>
+            <configFile>
+              <type>env</type>
+              <fileName>cdap-env.sh</fileName>
+              <dictionaryName>cdap-env</dictionaryName>
+            </configFile>
+            <configFile>
+              <type>xml</type>
+              <fileName>cdap-security.xml</fileName>
+              <dictionaryName>cdap-security</dictionaryName>
+            </configFile>
+            <configFile>
+              <type>xml</type>
+              <fileName>cdap-site.xml</fileName>
+              <dictionaryName>cdap-site</dictionaryName>
+            </configFile>
+            <configFile>
+              <type>env</type>
+              <fileName>logback.xml</fileName>
+              <dictionaryName>cdap-logback</dictionaryName>
+            </configFile>
+            <configFile>
+              <type>env</type>
+              <fileName>logback-container.xml</fileName>
+              <dictionaryName>cdap-logback-container</dictionaryName>
+            </configFile>
+          </configFiles>
+          <customCommands>
+            <customCommand>
+              <name>UPGRADE</name>
+              <displayName>Run CDAP Upgrade Tool</displayName>
+              <commandScript>
+                <script>scripts/master.py</script>
+                <scriptType>PYTHON</scriptType>
+                <timeout>1800</timeout>
+              </commandScript>
+            </customCommand>
+            <customCommand>
+              <name>UPGRADE_HBASE</name>
+              <displayName>Run CDAP HBase Coprocessor Upgrade Tool</displayName>
+              <commandScript>
+                <script>scripts/master.py</script>
+                <scriptType>PYTHON</scriptType>
+                <timeout>1800</timeout>
+              </commandScript>
+            </customCommand>
+            <customCommand>
+              <name>POSTUPGRADE</name>
+              <displayName>Run CDAP Post-Upgrade Tasks</displayName>
+              <commandScript>
+                <script>scripts/master.py</script>
+                <scriptType>PYTHON</scriptType>
+                <timeout>1800</timeout>
+              </commandScript>
+            </customCommand>
+            <customCommand>
+              <name>queue_debugger</name>
+              <displayName>Run CDAP Queue Debugger Tool</displayName>
+              <commandScript>
+                <script>scripts/master.py</script>
+                <scriptType>PYTHON</scriptType>
+                <timeout>1800</timeout>
+              </commandScript>
+            </customCommand>
+            <customCommand>
+              <name>jobqueue_debugger</name>
+              <displayName>Run CDAP Job Queue Debugger Tool</displayName>
+              <commandScript>
+                <script>scripts/master.py</script>
+                <scriptType>PYTHON</scriptType>
+                <timeout>1800</timeout>
+              </commandScript>
+            </customCommand>
+          </customCommands>
+          <dependencies>
+            <dependency>
+              <name>CDAP/CDAP_KAFKA</name>
+              <scope>cluster</scope>
+              <auto-deploy>
+                <enabled>true</enabled>
+                <co-locate>CDAP/CDAP_MASTER</co-locate>
+              </auto-deploy>
+            </dependency>
+            <dependency>
+              <name>CDAP/CDAP_ROUTER</name>
+              <scope>cluster</scope>
+              <auto-deploy>
+                <enabled>true</enabled>
+                <co-locate>CDAP/CDAP_MASTER</co-locate>
+              </auto-deploy>
+            </dependency>
+            <dependency>
+              <name>ZOOKEEPER/ZOOKEEPER_SERVER</name>
+              <scope>cluster</scope>
+              <auto-deploy>
+                <enabled>true</enabled>
+                <co-locate>CDAP/CDAP_MASTER</co-locate>
+              </auto-deploy>
+            </dependency>
+            <dependency>
+              <name>YARN/YARN_CLIENT</name>
+              <scope>host</scope>
+              <auto-deploy>
+                <enabled>true</enabled>
+              </auto-deploy>
+            </dependency>
+            <dependency>
+              <name>MAPREDUCE2/MAPREDUCE2_CLIENT</name>
+              <scope>host</scope>
+              <auto-deploy>
+                <enabled>true</enabled>
+              </auto-deploy>
+            </dependency>
+            <dependency>
+              <name>HDFS/HDFS_CLIENT</name>
+              <scope>host</scope>
+              <auto-deploy>
+                <enabled>true</enabled>
+              </auto-deploy>
+            </dependency>
+            <dependency>
+              <name>HBASE/HBASE_CLIENT</name>
+              <scope>host</scope>
+              <auto-deploy>
+                <enabled>true</enabled>
+              </auto-deploy>
+            </dependency>
+            <dependency>
+              <name>ZOOKEEPER/ZOOKEEPER_CLIENT</name>
+              <scope>host</scope>
+              <auto-deploy>
+                <enabled>true</enabled>
+              </auto-deploy>
+            </dependency>
+            <dependency>
+              <name>HIVE/HIVE_CLIENT</name>
+              <scope>host</scope>
+              <auto-deploy>
+                <enabled>true</enabled>
+              </auto-deploy>
+            </dependency>
+          </dependencies>
+          <configuration-dependencies>
+            <!-- CDAP files used by Master -->
+            <config-type>cdap-logback-container</config-type>
+            <config-type>cdap-security</config-type>
+            <!-- Hadoop services -->
+            <config-type>core-site</config-type>
+            <config-type>hdfs-site</config-type>
+            <config-type>yarn-site</config-type>
+            <!-- HBase -->
+            <config-type>hbase-site</config-type>
+            <!-- Hive -->
+            <config-type>hive-site</config-type>
+            <!-- ZooKeeper -->
+            <config-type>zoo.cfg</config-type>
+          </configuration-dependencies>
+        </component>
+
+        <component>
+          <!-- CDAP Router -->
+          <name>CDAP_ROUTER</name>
+          <displayName>CDAP Router</displayName>
+          <category>MASTER</category>
+          <cardinality>1+</cardinality>
+          <timelineAppid>CDAP</timelineAppid>
+          <commandScript>
+            <script>scripts/router.py</script>
+            <scriptType>PYTHON</scriptType>
+            <timeout>1800</timeout>
+          </commandScript>
+          <configFiles>
+            <configFile>
+              <type>env</type>
+              <fileName>cdap-env.sh</fileName>
+              <dictionaryName>cdap-env</dictionaryName>
+            </configFile>
+            <configFile>
+              <type>xml</type>
+              <fileName>cdap-security.xml</fileName>
+              <dictionaryName>cdap-security</dictionaryName>
+            </configFile>
+            <configFile>
+              <type>xml</type>
+              <fileName>cdap-site.xml</fileName>
+              <dictionaryName>cdap-site</dictionaryName>
+            </configFile>
+            <configFile>
+              <type>env</type>
+              <fileName>logback.xml</fileName>
+              <dictionaryName>cdap-logback</dictionaryName>
+            </configFile>
+          </configFiles>
+          <dependencies>
+            <dependency>
+              <name>ZOOKEEPER/ZOOKEEPER_SERVER</name>
+              <scope>cluster</scope>
+              <auto-deploy>
+                <enabled>true</enabled>
+                <co-locate>CDAP/CDAP_MASTER</co-locate>
+              </auto-deploy>
+            </dependency>
+            <dependency>
+              <name>ZOOKEEPER/ZOOKEEPER_CLIENT</name>
+              <scope>host</scope>
+              <auto-deploy>
+                <enabled>true</enabled>
+              </auto-deploy>
+            </dependency>
+            <dependency>
+              <name>HBASE/HBASE_CLIENT</name>
+              <scope>host</scope>
+              <auto-deploy>
+                <enabled>true</enabled>
+              </auto-deploy>
+            </dependency>
+          </dependencies>
+          <configuration-dependencies>
+            <config-type>cdap-security</config-type>
+          </configuration-dependencies>
+        </component>
+
+        <component>
+          <!-- CDAP Kafka Server-->
+          <name>CDAP_KAFKA</name>
+          <displayName>CDAP Kafka Server</displayName>
+          <category>MASTER</category>
+          <cardinality>1+</cardinality>
+          <commandScript>
+            <script>scripts/kafka.py</script>
+            <scriptType>PYTHON</scriptType>
+            <timeout>1800</timeout>
+          </commandScript>
+          <dependencies>
+            <dependency>
+              <name>ZOOKEEPER/ZOOKEEPER_SERVER</name>
+              <scope>cluster</scope>
+              <auto-deploy>
+                <enabled>true</enabled>
+                <co-locate>CDAP/CDAP_MASTER</co-locate>
+              </auto-deploy>
+            </dependency>
+            <dependency>
+              <name>ZOOKEEPER/ZOOKEEPER_CLIENT</name>
+              <scope>host</scope>
+              <auto-deploy>
+                <enabled>true</enabled>
+              </auto-deploy>
+            </dependency>
+          </dependencies>
+          <configFiles>
+            <configFile>
+              <type>env</type>
+              <fileName>cdap-env.sh</fileName>
+              <dictionaryName>cdap-env</dictionaryName>
+            </configFile>
+            <configFile>
+              <type>xml</type>
+              <fileName>cdap-site.xml</fileName>
+              <dictionaryName>cdap-site</dictionaryName>
+            </configFile>
+            <configFile>
+              <type>env</type>
+              <fileName>logback.xml</fileName>
+              <dictionaryName>cdap-logback</dictionaryName>
+            </configFile>
+          </configFiles>
+        </component>
+
+        <component>
+          <!-- CDAP UI -->
+          <name>CDAP_UI</name>
+          <displayName>CDAP UI</displayName>
+          <category>MASTER</category>
+          <cardinality>1+</cardinality>
+          <timelineAppid>CDAP</timelineAppid>
+          <commandScript>
+            <script>scripts/ui.py</script>
+            <scriptType>PYTHON</scriptType>
+            <timeout>1800</timeout>
+          </commandScript>
+          <configFiles>
+            <configFile>
+              <type>env</type>
+              <fileName>cdap-env.sh</fileName>
+              <dictionaryName>cdap-env</dictionaryName>
+            </configFile>
+            <configFile>
+              <type>xml</type>
+              <fileName>cdap-security.xml</fileName>
+              <dictionaryName>cdap-security</dictionaryName>
+            </configFile>
+            <configFile>
+              <type>xml</type>
+              <fileName>cdap-site.xml</fileName>
+              <dictionaryName>cdap-site</dictionaryName>
+            </configFile>
+            <configFile>
+              <type>env</type>
+              <fileName>logback.xml</fileName>
+              <dictionaryName>cdap-logback</dictionaryName>
+            </configFile>
+          </configFiles>
+          <configuration-dependencies>
+            <config-type>cdap-security</config-type>
+          </configuration-dependencies>
+        </component>
+
+        <component>
+          <!-- CDAP Auth Server -->
+          <name>CDAP_AUTH_SERVER</name>
+          <displayName>CDAP Auth Server</displayName>
+          <category>MASTER</category>
+          <cardinality>0+</cardinality>
+          <commandScript>
+            <script>scripts/auth.py</script>
+            <scriptType>PYTHON</scriptType>
+            <timeout>1800</timeout>
+          </commandScript>
+          <configFiles>
+            <configFile>
+              <type>env</type>
+              <fileName>cdap-env.sh</fileName>
+              <dictionaryName>cdap-env</dictionaryName>
+            </configFile>
+            <configFile>
+              <type>xml</type>
+              <fileName>cdap-security.xml</fileName>
+              <dictionaryName>cdap-security</dictionaryName>
+            </configFile>
+            <configFile>
+              <type>xml</type>
+              <fileName>cdap-site.xml</fileName>
+              <dictionaryName>cdap-site</dictionaryName>
+            </configFile>
+            <configFile>
+              <type>env</type>
+              <fileName>logback.xml</fileName>
+              <dictionaryName>cdap-logback</dictionaryName>
+            </configFile>
+          </configFiles>
+          <dependencies>
+            <dependency>
+              <name>ZOOKEEPER/ZOOKEEPER_SERVER</name>
+              <scope>cluster</scope>
+              <auto-deploy>
+                <enabled>true</enabled>
+                <co-locate>CDAP/CDAP_MASTER</co-locate>
+              </auto-deploy>
+            </dependency>
+            <dependency>
+              <name>ZOOKEEPER/ZOOKEEPER_CLIENT</name>
+              <scope>host</scope>
+              <auto-deploy>
+                <enabled>true</enabled>
+              </auto-deploy>
+            </dependency>
+          </dependencies>
+          <configuration-dependencies>
+            <config-type>cdap-security</config-type>
+          </configuration-dependencies>
+        </component>
+
+      </components>
+
+      <osSpecifics>
+        <osSpecific>
+          <osFamily>redhat6</osFamily>
+        </osSpecific>
+        <osSpecific>
+          <osFamily>ubuntu12</osFamily>
+        </osSpecific>
+      </osSpecifics>
+
+      <themes>
+        <theme>
+          <fileName>theme.json</fileName>
+          <default>true</default>
+        </theme>
+      </themes>
+
+      <quickLinksConfigurations>
+        <quickLinksConfiguration>
+          <fileName>quicklinks.json</fileName>
+          <default>true</default>
+        </quickLinksConfiguration>
+      </quickLinksConfigurations>
+
+      <commandScript>
+        <script>scripts/service_check.py</script>
+        <scriptType>PYTHON</scriptType>
+        <timeout>300</timeout>
+      </commandScript>
+
+      <requiredServices>
+        <service>HBASE</service>
+        <service>HDFS</service>
+        <service>HIVE</service>
+        <service>YARN</service>
+        <service>ZOOKEEPER</service>
+      </requiredServices>
+
+      <!-- names for config files (under configuration dir) -->
+      <configuration-dependencies>
+        <config-type>cdap-env</config-type>
+        <config-type>cdap-logback</config-type>
+        <config-type>cdap-site</config-type>
+      </configuration-dependencies>
+      <restartRequiredAfterChange>true</restartRequiredAfterChange>
+    </service>
+  </services>
+</metainfo>

@@ -1,0 +1,5 @@
+[CDAP]
+name=Cask Data Application Platform Packages
+baseurl=REPO_URL
+enabled=1
+gpgcheck=GPGCHECK
