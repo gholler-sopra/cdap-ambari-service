@@ -99,10 +99,10 @@ class CDAP400ServiceAdvisor(service_advisor.ServiceAdvisor):
                         cdapMem += int(cdapProperties[property])
 
         # log values
-        Logger.info('nodeManagerCpu: ' + str(nodeManagerCpu))
-        Logger.info('cdapCpu: ' + str(cdapCpu))
-        Logger.info('nodeManagerMem: ' + str(nodeManagerMem))
-        Logger.info('cdapMem: ' + str(cdapMem))
+       # Logger.info('nodeManagerCpu: ' + str(nodeManagerCpu))
+       # Logger.info('cdapCpu: ' + str(cdapCpu))
+       # Logger.info('nodeManagerMem: ' + str(nodeManagerMem))
+       # Logger.info('cdapMem: ' + str(cdapMem))
 
         # throw error if CDAP uses more core than available in YARN
         if (int(cdapCpu) > int(nodeManagerCpu)):
