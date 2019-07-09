@@ -105,7 +105,7 @@ else:
 
 # Get ZooKeeper variables
 zk_client_port = str(default('/configurations/zoo.cfg/clientPort', None))
-zk_hosts = config['clusterHostInfo']['zookeeper_hosts']
+zk_hosts = config['clusterHostInfo']['zookeeper_server_hosts']
 zk_hosts.sort()
 cdap_zookeeper_quorum = helpers.generate_quorum(zk_hosts, zk_client_port) + '/' + root_namespace
 

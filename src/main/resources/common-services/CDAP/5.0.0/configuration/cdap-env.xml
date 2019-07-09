@@ -143,6 +143,16 @@
     <property-type>USER</property-type>
     <description>CDAP User Name</description>
     <display-name>CDAP User Name</display-name>
+    <value-attributes>
+      <type>user</type>
+      <overridable>false</overridable>
+      <user-groups>
+        <property>
+          <type>cluster-env</type>
+          <name>user_group</name>
+        </property>
+      </user-groups>
+    </value-attributes>
   </property>
 
   <property>
