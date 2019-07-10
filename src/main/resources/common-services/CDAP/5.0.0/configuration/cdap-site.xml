@@ -897,7 +897,7 @@
 
   <property>
     <name>explore.enabled</name>
-    <value>true</value>
+    <value>false</value>
     <description>
       Determines if the CDAP Explore Service (ad-hoc SQL queries) is enabled
     </description>
@@ -965,15 +965,15 @@
     </value-attributes>
   </property>
 
-  <property>
+  <!--property>
     <name>explore.executor.twill.java.heap.memory.ratio</name>
     <value>0.6</value>
     <description>
       The minimum ratio of heap to non-heap memory for the explore executor service container
     </description>
-  </property>
+  </property-->
 
-  <property>
+  <!--property>
     <name>explore.executor.twill.java.reserved.memory.mb</name>
     <value>300</value>
     <description>
@@ -988,7 +988,7 @@
       <increment-step>256</increment-step>
       <overridable>false</overridable>
     </value-attributes>
-  </property>
+  </property-->
 
   <property>
     <name>explore.inactive.operation.timeout.secs</name>
