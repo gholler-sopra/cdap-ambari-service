@@ -79,11 +79,11 @@ def cdap_config(name=None):
             group=params.user_group
         )
 
-    #File(
-    #    format("{params.cdap_conf_dir}/cdap-env.sh"),
-    #    owner=params.cdap_user,
-    #    content=InlineTemplate(params.cdap_env_sh_template)
-    #)
+    File(
+        format("{params.cdap_conf_dir}/cdap-env.sh"),
+        owner=params.cdap_user,
+        content=InlineTemplate(params.cdap_env_sh_template)
+    )
 
     File(
         format("{params.cdap_conf_dir}/logback.xml"),
