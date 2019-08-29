@@ -1472,7 +1472,7 @@
 
   <property>
     <name>messaging.container.memory.mb</name>
-    <value>1024</value>
+    <value>4096</value>
     <description>
       Memory in megabytes for each messaging service instance
     </description>
