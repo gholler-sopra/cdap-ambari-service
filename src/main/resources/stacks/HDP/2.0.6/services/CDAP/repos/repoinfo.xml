@@ -17,15 +17,15 @@
 <reposinfo>
   <os family="redhat6">
     <repo>
-      <baseurl>http://repository.cask.co/centos/6/x86_64/cdap/5.1</baseurl>
-      <repoid>CDAP-5.1</repoid>
+      <baseurl>http://artifacts.ggn.in.guavus.com:80/ggn-dev-rpms/cdap-build/5.1.208/release/</baseurl>
+      <repoid>CDAP-5.1.208</repoid>
       <reponame>CDAP</reponame>
     </repo>
   </os>
   <os family="redhat7">
     <repo>
-      <baseurl>http://repository.cask.co/centos/6/x86_64/cdap/5.1</baseurl>
-      <repoid>CDAP-5.1</repoid>
+      <baseurl>http://artifacts.ggn.in.guavus.com:80/ggn-dev-rpms/cdap-build/5.1.208/release/</baseurl>
+      <repoid>CDAP-5.1.208</repoid>
       <reponame>CDAP</reponame>
     </repo>
   </os>

@@ -30,7 +30,7 @@ class Master(Script):
         # Install any global packages
         self.install_packages(env)
         # Workaround for CDAP-3961
-        helpers.package('cdap-hbase-compat-1.1')
+        helpers.package('cdap-hbase-compat-2.0')
         # Install package
         helpers.package('cdap-master')
         self.configure(env)
