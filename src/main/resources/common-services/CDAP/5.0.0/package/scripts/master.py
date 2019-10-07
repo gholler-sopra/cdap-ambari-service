@@ -64,14 +64,14 @@ class Master(Script):
         # execute ls /cdap/election/master.services and check if emty then only execute the following steps else exit
 
         import params
-        Execute("/usr/hdp/3.1.0.0-78/zookeeper/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " ls /election/master.services > /tmp/election_master_services", user='zookeeper')
+        Execute("/usr/hdp/current/zookeeper-client/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " ls /election/master.services > /tmp/election_master_services", user='zookeeper')
         status, output = commands.getstatusoutput("tail -n1 /tmp/election_master_services")
         if status == 0:
             if (output.startswith('[') and output.endswith(']')):
                 if (output == '[]'):
                     # exectute ls /cdap/twill and save its output
                     time.sleep(60) 
-                    Execute("/usr/hdp/3.1.0.0-78/zookeeper/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " ls /twill > /tmp/twill_master_services", user='zookeeper')
+                    Execute("/usr/hdp/current/zookeeper-client/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " ls /twill > /tmp/twill_master_services", user='zookeeper')
                     status, output = commands.getstatusoutput("tail -n1 /tmp/twill_master_services")
                     if status == 0:
                          if (output.startswith('[') and output.endswith(']')):
@@ -83,7 +83,7 @@ class Master(Script):
                                  for service in services:
                                      service = service.strip()
                                      if (service != 'master.services'):
-                                         Execute("/usr/hdp/3.1.0.0-78/zookeeper/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " ls /twill/" + service + "/instances > /tmp/twill_" + service + "_instances", user='zookeeper') 
+                                         Execute("/usr/hdp/current/zookeeper-client/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " ls /twill/" + service + "/instances > /tmp/twill_" + service + "_instances", user='zookeeper') 
                                          status, output = commands.getstatusoutput("tail -n1 /tmp/twill_" + service + "_instances")
                                          if status == 0:
                                              if (output.startswith('[') and output.endswith(']')):
@@ -95,8 +95,8 @@ class Master(Script):
                                                      print(service)
                                                      print(result)
                                                      print('here executing the commands')
-                                                     print("/usr/hdp/3.1.0.0-78/zookeeper/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " get /twill/" + service + "/instances/" + result + " > /tmp/twill_" + service + "_instances_output")
-                                                     Execute("/usr/hdp/3.1.0.0-78/zookeeper/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " get /twill/" + service + "/instances/" + result + " > /tmp/twill_" + service + "_instances_output", user='zookeeper')
+                                                     print("/usr/hdp/current/zookeeper-client/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " get /twill/" + service + "/instances/" + result + " > /tmp/twill_" + service + "_instances_output")
+                                                     Execute("/usr/hdp/current/zookeeper-client/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " get /twill/" + service + "/instances/" + result + " > /tmp/twill_" + service + "_instances_output", user='zookeeper')
                                                      status, output = commands.getstatusoutput("tail -n1 /tmp/twill_" + service + "_instances_output")
                                                      if status == 0:
                                                          print(output)
