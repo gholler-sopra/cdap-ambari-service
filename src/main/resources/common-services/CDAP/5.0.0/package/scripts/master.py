@@ -66,54 +66,61 @@ class Master(Script):
         import params
         Execute("/usr/hdp/3.1.0.0-78/zookeeper/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " ls /election/master.services > /tmp/election_master_services", user='zookeeper')
         status, output = commands.getstatusoutput("tail -n1 /tmp/election_master_services")
-        if status == 0:
-            if (output.startswith('[') and output.endswith(']')):
-                if (output == '[]'):
-                    # exectute ls /cdap/twill and save its output
-                    time.sleep(60) 
-                    Execute("/usr/hdp/3.1.0.0-78/zookeeper/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " ls /twill > /tmp/twill_master_services", user='zookeeper')
-                    status, output = commands.getstatusoutput("tail -n1 /tmp/twill_master_services")
-                    if status == 0:
-                         if (output.startswith('[') and output.endswith(']')):
-                             if (output != '[]'):
-                                 print(output)
-                                 result = output[1:len(output)-1]
-                                 services = result.split(',')
-                                 # iterate over last output and execute ls /cdap/twill/<name>/instances and save its output
-                                 for service in services:
-                                     service = service.strip()
-                                     if (service != 'master.services'):
-                                         Execute("/usr/hdp/3.1.0.0-78/zookeeper/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " ls /twill/" + service + "/instances > /tmp/twill_" + service + "_instances", user='zookeeper') 
-                                         status, output = commands.getstatusoutput("tail -n1 /tmp/twill_" + service + "_instances")
-                                         if status == 0:
-                                             if (output.startswith('[') and output.endswith(']')):
-                                                 if (output != '[]'):
-                                                     print(output)
-                                                     result = output[1:len(output)-1]
-                                                     # execute get /cdap/twill/<name>/instances/<last_output and save its output
-                                                     print(params.cdap_zookeeper_quorum)
-                                                     print(service)
-                                                     print(result)
-                                                     print('here executing the commands')
-                                                     print("/usr/hdp/3.1.0.0-78/zookeeper/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " get /twill/" + service + "/instances/" + result + " > /tmp/twill_" + service + "_instances_output")
-                                                     Execute("/usr/hdp/3.1.0.0-78/zookeeper/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " get /twill/" + service + "/instances/" + result + " > /tmp/twill_" + service + "_instances_output", user='zookeeper')
-                                                     status, output = commands.getstatusoutput("tail -n1 /tmp/twill_" + service + "_instances_output")
-                                                     if status == 0:
-                                                         print(output)
-                                                         data = json.loads(output)
-                                                         container_id = data['data']['containerId']
-                                                         container_values = container_id.split('_')
-                                                         applicationId = "application_" + container_values[2] + "_" + container_values[3] 
-                                                         kinit_cmd = params.kinit_cmd_master
-                                                         kill_application_cmd = format("{kinit_cmd} yarn application -kill " + applicationId)
-                                                         print(kill_application_cmd)
-                                                         Execute(kill_application_cmd, user='cdap')
-                                                         print("applicationId : " + applicationId)
-                                                     Execute("rm -rf /tmp/twill_" + service + "_instances_output", user='zookeeper') 
-                                         Execute("rm -rf /tmp/twill_" + service + "_instances", user='zookeeper') 
-                    Execute("rm -rf /tmp/twill_master_services", user='zookeeper')                  
+        if status != 0:
+            print('fail in executing the command ls /election/master.services on zookeeper')
+            return
+        if (!(output.startswith('[') and output.endswith(']') and output == '[]')):
+            print('outt=put value is not equal to []')
+            return
+        # exectute ls /cdap/twill and save its output
+        Execute("/usr/hdp/3.1.0.0-78/zookeeper/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " ls /twill > /tmp/twill_master_services", user='zookeeper')
+        status, output = commands.getstatusoutput("tail -n1 /tmp/twill_master_services")
+        if status != 0:
+            print('fail in executing the command ls /twill on zookeeper')
+            return
+        if (!(output.startswith('[') and output.endswith(']') and output != '[]')):
+            print('output value is equal to []')
+            return
+        print(output)
+        result = output[1:len(output)-1]
+        services = result.split(',')
+        # iterate over last output and execute ls /cdap/twill/<name>/instances and save its output
+        for service in services:
+            service = service.strip()
+            if (service != 'master.services'):
+                Execute("/usr/hdp/3.1.0.0-78/zookeeper/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " ls /twill/" + service + "/instances > /tmp/twill_" + service + "_instances", user='zookeeper') 
+                status, output = commands.getstatusoutput("tail -n1 /tmp/twill_" + service + "_instances")
+                if status != 0:
+                    print('fail in executing the command ls /twill/' + service + '/instances')
+                    return        
+                if (!(output.startswith('[') and output.endswith(']') and output != '[]')):
+                    print('output value is equal to []')
+                    return
+                print(output)
+                result = output[1:len(output)-1]
+                # execute get /cdap/twill/<name>/instances/<last_output and save its output
+                print(params.cdap_zookeeper_quorum)
+                print(service)
+                print(result)
+                Execute("/usr/hdp/3.1.0.0-78/zookeeper/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " get /twill/" + service + "/instances/" + result + " > /tmp/twill_" + service + "_instances_output", user='zookeeper')
+                status, output = commands.getstatusoutput("tail -n1 /tmp/twill_" + service + "_instances_output")
+                if status != 0:
+                    print('fail in executing the command get /twill/' + service + '/instances')  
+                    return
+                print(output)
+                data = json.loads(output)
+                container_id = data['data']['containerId']
+                container_values = container_id.split('_')
+                applicationId = "application_" + container_values[2] + "_" + container_values[3] 
+                kinit_cmd = params.kinit_cmd_master
+                kill_application_cmd = format("{kinit_cmd} yarn application -kill " + applicationId)
+                print(kill_application_cmd)
+                Execute(kill_application_cmd, user='cdap')
+                print("applicationId : " + applicationId)
+                Execute("rm -rf /tmp/twill_" + service + "_instances_output", user='zookeeper') 
+                Execute("rm -rf /tmp/twill_" + service + "_instances", user='zookeeper') 
+        Execute("rm -rf /tmp/twill_master_services", user='zookeeper')                  
         Execute("rm -rf /tmp/election_master_services", user='zookeeper')             
-
 
 
     def stop(self, env, upgrade_type=None):
