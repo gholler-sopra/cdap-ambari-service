@@ -17,8 +17,8 @@
 import ambari_helpers as helpers
 from resource_management import *
 import json
-import commands
 import time
+import subprocess as sp
 
 class Master(Script):
     def install(self, env):
@@ -65,58 +65,54 @@ class Master(Script):
 
         import params
         Execute("/usr/hdp/current/zookeeper-client/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " ls /election/master.services > /tmp/election_master_services", user='zookeeper')
-        status, output = commands.getstatusoutput("tail -n1 /tmp/election_master_services")
-        if status != 0:
+        pipe = sp.Popen( 'tail -n1 /tmp/election_master_services', shell=True, stdout=sp.PIPE, stderr=sp.PIPE )
+        if pipe.wait() != 0:
             print('fail in executing the command ls /election/master.services on zookeeper')
             return
+        output = pipe.communicate()[0].strip()
         if (not(output.startswith('[') and output.endswith(']') and output == '[]')):
             print('outt=put value is not equal to []')
             return
         # exectute ls /cdap/twill and save its output
         Execute("/usr/hdp/current/zookeeper-client/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " ls /twill > /tmp/twill_master_services", user='zookeeper')
-        status, output = commands.getstatusoutput("tail -n1 /tmp/twill_master_services")
-        if status != 0:
+        pipe = sp.Popen( 'tail -n1 /tmp/twill_master_services', shell=True, stdout=sp.PIPE, stderr=sp.PIPE )
+        if pipe.wait() != 0:
             print('fail in executing the command ls /twill on zookeeper')
             return
+        output = pipe.communicate()[0].strip()
         if (not(output.startswith('[') and output.endswith(']') and output != '[]')):
             print('output value is equal to []')
             return
-        print(output)
         result = output[1:len(output)-1]
         services = result.split(',')
         # iterate over last output and execute ls /cdap/twill/<name>/instances and save its output
         for service in services:
             service = service.strip()
             if (service != 'master.services'):
-                Execute("/usr/hdp/current/zookeeper-client/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " ls /twill/" + service + "/instances > /tmp/twill_" + service + "_instances", user='zookeeper') 
-                status, output = commands.getstatusoutput("tail -n1 /tmp/twill_" + service + "_instances")
-                if status != 0:
-                    print('fail in executing the command ls /twill/' + service + '/instances')
+                Execute("/usr/hdp/current/zookeeper-client/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " ls /twill/" + service + "/instances > /tmp/twill_" + service + "_instances", user='zookeeper')
+                pipe = sp.Popen( 'tail -n1 /tmp/twill_' + service + '_instances', shell=True, stdout=sp.PIPE, stderr=sp.PIPE )
+                if pipe.wait() != 0:
+                    print('fail in executing the command ls /twill/_' + service + '/_instances')
                     return        
+                output = pipe.communicate()[0].strip()
                 if (not(output.startswith('[') and output.endswith(']') and output != '[]')):
                     print('output value is equal to []')
                     return
-                print(output)
                 result = output[1:len(output)-1]
                 # execute get /cdap/twill/<name>/instances/<last_output and save its output
-                print(params.cdap_zookeeper_quorum)
-                print(service)
-                print(result)
                 Execute("/usr/hdp/current/zookeeper-client/bin/zkCli.sh -server " + params.cdap_zookeeper_quorum + " get /twill/" + service + "/instances/" + result + " > /tmp/twill_" + service + "_instances_output", user='zookeeper')
-                status, output = commands.getstatusoutput("tail -n1 /tmp/twill_" + service + "_instances_output")
-                if status != 0:
+                pipe = sp.Popen( 'tail -n1 /tmp/twill_' + service + '_instances_output', shell=True, stdout=sp.PIPE, stderr=sp.PIPE )
+                if pipe.wait() != 0:
                     print('fail in executing the command get /twill/' + service + '/instances')  
                     return
-                print(output)
+                output = pipe.communicate()[0].strip()
                 data = json.loads(output)
                 container_id = data['data']['containerId']
                 container_values = container_id.split('_')
                 applicationId = "application_" + container_values[2] + "_" + container_values[3] 
                 kinit_cmd = params.kinit_cmd_master
                 kill_application_cmd = format("{kinit_cmd} yarn application -kill " + applicationId)
-                print(kill_application_cmd)
                 Execute(kill_application_cmd, user='cdap')
-                print("applicationId : " + applicationId)
                 Execute("rm -rf /tmp/twill_" + service + "_instances_output", user='zookeeper') 
                 Execute("rm -rf /tmp/twill_" + service + "_instances", user='zookeeper') 
         Execute("rm -rf /tmp/twill_master_services", user='zookeeper')                  
