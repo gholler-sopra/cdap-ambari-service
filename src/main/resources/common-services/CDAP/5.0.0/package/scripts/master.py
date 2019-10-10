@@ -85,6 +85,7 @@ class Master(Script):
             Execute("rm -rf /tmp/election_master_services", user='zookeeper')
             return
         if (not(output.startswith('[') and output.endswith(']') and output == '[]')):
+            Execute("rm -rf /tmp/election_master_services", user='zookeeper')
             print('output value is not equal to []')
             return
         # exectute ls /cdap/twill and save its output
@@ -94,6 +95,7 @@ class Master(Script):
             Execute("rm -rf /tmp/twill_master_services", user='zookeeper')
             return
         if (not(output.startswith('[') and output.endswith(']') and output != '[]')):
+            Execute("rm -rf /tmp/twill_master_services", user='zookeeper')
             print('output value is equal to []')
             return
         result = output[1:len(output)-1]
@@ -109,8 +111,10 @@ class Master(Script):
                 Execute("rm -rf /tmp/twill_" + service + "_instances", user='zookeeper')
                 continue        
             if (not(output.startswith('[') and output.endswith(']') and output != '[]')):
+                Execute("rm -rf /tmp/twill_" + service + "_instances", user='zookeeper')
                 print('output value is equal to []')
                 continue
+            Execute("rm -rf /tmp/twill_" + service + "_instances", user='zookeeper')
             result = output[1:len(output)-1]
             # execute get /cdap/twill/<name>/instances/<last_output and save its output
             Execute(zkCliCommand + " get /twill/" + service + "/instances/" + result + " > /tmp/twill_" + service + "_instances_output", user='zookeeper')
@@ -119,14 +123,21 @@ class Master(Script):
                 Execute("rm -rf /tmp/twill_" + service + "_instances_output", user='zookeeper')
                 continue
             data = json.loads(output)
+            status = 1
+            if 'data' in data:
+                if 'containerId' in data['data']:
+                    status = 0
+            if status != 0:
+                Execute("rm -rf /tmp/twill_" + service + "_instances_output", user='zookeeper') 
+                print('conatinerId key not present in data')
+                continue
+            Execute("rm -rf /tmp/twill_" + service + "_instances_output", user='zookeeper') 
             container_id = data['data']['containerId']
             container_values = container_id.split('_')
             applicationId = "application_" + container_values[2] + "_" + container_values[3] 
             kinit_cmd = params.kinit_cmd_master
             kill_application_cmd = format("{kinit_cmd} yarn application -kill " + applicationId)
             Execute(kill_application_cmd, user='cdap')
-            Execute("rm -rf /tmp/twill_" + service + "_instances_output", user='zookeeper') 
-            Execute("rm -rf /tmp/twill_" + service + "_instances", user='zookeeper') 
         Execute("rm -rf /tmp/twill_master_services", user='zookeeper')                  
         Execute("rm -rf /tmp/election_master_services", user='zookeeper')             
 
