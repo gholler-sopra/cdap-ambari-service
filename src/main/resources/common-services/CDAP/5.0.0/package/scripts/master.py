@@ -72,7 +72,7 @@ class Master(Script):
         status = 0
         return status, output
 
-    def killOlderProcesses(self):
+    def __killOlderProcesses(self):
         # execute ls /cdap/election/master.services and check if emty then only execute the following steps else exit
 
         import params
@@ -134,6 +134,9 @@ class Master(Script):
             Execute("rm -rf /tmp/twill_" + service + "_instances_output", user='zookeeper') 
             container_id = data['data']['containerId']
             container_values = container_id.split('_')
+            if (len(container_values) <= 3):
+                print("container id name is not correct")
+                continue
             applicationId = "application_" + container_values[2] + "_" + container_values[3] 
             kinit_cmd = params.kinit_cmd_master
             kill_application_cmd = format("{kinit_cmd} yarn application -kill " + applicationId)
@@ -153,7 +156,7 @@ class Master(Script):
         )
         print('sleep 60 seconds before kill the other service processes')
         time.sleep(60)
-        self.killOlderProcesses()
+        self.__killOlderProcesses()
 
     def status(self, env):
         import status_params
