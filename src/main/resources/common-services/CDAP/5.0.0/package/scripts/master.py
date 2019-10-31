@@ -16,9 +16,7 @@
 
 import ambari_helpers as helpers
 from resource_management import *
-import json
-import time
-import subprocess as sp
+
 
 class Master(Script):
     def install(self, env):
@@ -43,7 +41,6 @@ class Master(Script):
         import status_params
         env.set_params(params)
         self.configure(env)
-
         helpers.create_hdfs_dir(params.hdfs_namespace, params.cdap_hdfs_user, 775)
         # Create user's HDFS home
         helpers.create_hdfs_dir('/user/' + params.cdap_user, params.cdap_user, 775)
@@ -60,91 +57,6 @@ class Master(Script):
             not_if=no_op_test
         )
 
-    def executeShellCommands(self, command):
-        output = ''
-        status = 1
-
-        pipe = sp.Popen(command, shell=True, stdout=sp.PIPE, stderr=sp.PIPE )
-        if pipe.wait() != 0:
-            print("Command execution fail " + command)
-            return status, output
-        output = pipe.communicate()[0].strip()
-        status = 0
-        return status, output
-
-    def __killOlderProcesses(self):
-        # execute ls /cdap/election/master.services and check if emty then only execute the following steps else exit
-
-        import params
-
-        zkCliCommand = '/usr/hdp/current/zookeeper-client/bin/zkCli.sh -server ' + params.cdap_zookeeper_quorum
-
-        Execute(zkCliCommand + " ls /election/master.services > /tmp/election_master_services", user='zookeeper')
-        status, output = self.executeShellCommands('tail -n1 /tmp/election_master_services')
-        if status != 0:
-            Execute("rm -rf /tmp/election_master_services", user='zookeeper')
-            return
-        if (not(output.startswith('[') and output.endswith(']') and output == '[]')):
-            Execute("rm -rf /tmp/election_master_services", user='zookeeper')
-            print('output value is not equal to []')
-            return
-        # exectute ls /cdap/twill and save its output
-        Execute(zkCliCommand + " ls /twill > /tmp/twill_master_services", user='zookeeper')
-        status, output = self.executeShellCommands('tail -n1 /tmp/twill_master_services')
-        if status != 0:
-            Execute("rm -rf /tmp/twill_master_services", user='zookeeper')
-            return
-        if (not(output.startswith('[') and output.endswith(']') and output != '[]')):
-            Execute("rm -rf /tmp/twill_master_services", user='zookeeper')
-            print('output value is equal to []')
-            return
-        result = output[1:len(output)-1]
-        services = result.split(',')
-        # iterate over last output and execute ls /cdap/twill/<name>/instances and save its output
-        for service in services:
-            service = service.strip()
-            if (service == 'master.services'):
-                continue
-            Execute(zkCliCommand + " ls /twill/" + service + "/instances > /tmp/twill_" + service + "_instances", user='zookeeper')
-            status, output = self.executeShellCommands('tail -n1 /tmp/twill_' + service + '_instances')
-            if status != 0:
-                Execute("rm -rf /tmp/twill_" + service + "_instances", user='zookeeper')
-                continue        
-            if (not(output.startswith('[') and output.endswith(']') and output != '[]')):
-                Execute("rm -rf /tmp/twill_" + service + "_instances", user='zookeeper')
-                print('output value is equal to []')
-                continue
-            Execute("rm -rf /tmp/twill_" + service + "_instances", user='zookeeper')
-            result = output[1:len(output)-1]
-            # execute get /cdap/twill/<name>/instances/<last_output and save its output
-            Execute(zkCliCommand + " get /twill/" + service + "/instances/" + result + " > /tmp/twill_" + service + "_instances_output", user='zookeeper')
-            status, output = self.executeShellCommands('tail -n1 /tmp/twill_' + service + '_instances_output')
-            if status != 0:
-                Execute("rm -rf /tmp/twill_" + service + "_instances_output", user='zookeeper')
-                continue
-            data = json.loads(output)
-            status = 1
-            if 'data' in data:
-                if 'containerId' in data['data']:
-                    status = 0
-            if status != 0:
-                Execute("rm -rf /tmp/twill_" + service + "_instances_output", user='zookeeper') 
-                print('conatinerId key not present in data')
-                continue
-            Execute("rm -rf /tmp/twill_" + service + "_instances_output", user='zookeeper') 
-            container_id = data['data']['containerId']
-            container_values = container_id.split('_')
-            if (len(container_values) <= 3):
-                print("container id name is not correct")
-                continue
-            applicationId = "application_" + container_values[2] + "_" + container_values[3] 
-            kinit_cmd = params.kinit_cmd_master
-            kill_application_cmd = format("{kinit_cmd} yarn application -kill " + applicationId)
-            Execute(kill_application_cmd, user='cdap')
-        Execute("rm -rf /tmp/twill_master_services", user='zookeeper')                  
-        Execute("rm -rf /tmp/election_master_services", user='zookeeper')             
-
-
     def stop(self, env, upgrade_type=None):
         print('Stop the CDAP Master')
         import status_params
@@ -154,9 +66,6 @@ class Master(Script):
             daemon_cmd,
             only_if=no_op_test
         )
-        print('sleep 60 seconds before kill the other service processes')
-        time.sleep(60)
-        self.__killOlderProcesses()
 
     def status(self, env):
         import status_params
