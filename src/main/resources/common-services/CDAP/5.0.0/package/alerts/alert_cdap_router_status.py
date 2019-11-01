@@ -30,9 +30,10 @@ def execute(configurations={}, parameters={}, host_name=None):
     if configurations is None:
         return (RESULT_STATE_UNKNOWN, ['There were no configurations supplied to the script.'])
     try:
-        import params
+        #import params
         check_cmd = format('/opt/cdap/gateway/bin/cdap router status')
-        Execute(check_cmd, timeout=5, user=params.cdap_user)
+        #Execute(check_cmd, timeout=5, user=params.cdap_user)
+        Execute(check_cmd, timeout=5, user='cdap')
         return(RESULT_STATE_OK, ['Router OK - CDAP Router is running'])
     except:
         return(RESULT_STATE_CRITICAL, [LOGGER_EXCEPTION_MESSAGE])
