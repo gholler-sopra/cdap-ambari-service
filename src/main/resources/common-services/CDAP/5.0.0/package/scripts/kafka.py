@@ -50,10 +50,12 @@ class Kafka(Script):
     def stop(self, env, upgrade_type=None):
         print('Stop the CDAP Kafka Server')
         import status_params
-        daemon_cmd = format('service cdap-kafka-server stop')
+        import params
+        daemon_cmd = format('/opt/cdap/kafka/bin/cdap kafka-server stop')
         no_op_test = format('ls {status_params.cdap_kafka_pid_file} >/dev/null 2>&1 && ps -p $(<{status_params.cdap_kafka_pid_file}) >/dev/null 2>&1')
         Execute(
             daemon_cmd,
+            user=params.cdap_user,
             only_if=no_op_test
         )
 
@@ -68,9 +70,11 @@ class Kafka(Script):
         helpers.cdap_config('kafka')
 
         # Why don't we use Directory here? A: parameters changed between Ambari minor versions
-        Execute(
-            "mkdir -p %s && chown %s:%s %s" % (params.kafka_log_dir, params.cdap_user, params.user_group, params.kafka_log_dir)
-        )
+        mkdir_logdir_cmd = ('mkdir', '-p', params.kafka_log_dir)
+        logdir_perms = params.cdap_user + ":" + params.user_group
+        chown_logdir_cmd = ('chown', logdir_perms, params.kafka_log_dir)
+        Execute(mkdir_logdir_cmd, sudo=True)
+        Execute(chown_logdir_cmd, sudo=True)
 
 if __name__ == "__main__":
     Kafka().execute()

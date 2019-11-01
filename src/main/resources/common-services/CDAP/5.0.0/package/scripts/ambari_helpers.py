@@ -18,7 +18,6 @@ import os
 from resource_management import *
 from resource_management.libraries.functions.version import format_stack_version
 
-
 def create_hdfs_dir(path, owner, perms):
     import params
     kinit_cmd = params.kinit_cmd_hdfs
@@ -32,43 +31,53 @@ def create_hdfs_dir(path, owner, perms):
 
 def package(name):
     import params
-    Execute("%s install -y %s" % (params.package_mgr, name), user='root')
+    yum_cmd = (params.package_mgr, '--disablerepo=*', '--enablerepo=CDAP', 'install', '-y', name)
+    Execute(yum_cmd, sudo=True)
 
 
 def add_repo(source, dest):
     import params
     dest_file = dest + params.repo_file
+    tmp_dest_file = "/tmp/" + params.repo_file
+
     # Remove previous dest_file always
-    Execute("rm -f %s" % (dest_file))
+    rm_dst_file_cmd = ('rm' , '-f' , dest_file)
+    Execute(rm_dst_file_cmd, sudo=True)
     # Skip sed if CDAP repos exist, we're on a newer Ambari... yay!
     no_op_test = format('ls {dest} 2>/dev/null | grep CDAP >/dev/null 2>&1')
     Execute(
-        "sed -e 's#REPO_URL#%s#' -e 's#GPGCHECK#%s#' %s > %s" % (params.repo_url, int(params.gpgcheck_enabled), source, dest_file),
+        "sed -e 's#REPO_URL#%s#' -e 's#GPGCHECK#%s#' %s > %s" % (params.repo_url, int(params.gpgcheck_enabled), source, tmp_dest_file),
         not_if=no_op_test
     )
-    Execute(params.key_cmd)
-    Execute(params.cache_cmd)
+    copy_to_repo_file_cmd = ("/bin/mv", '-f', tmp_dest_file, dest_file)
+    Execute(copy_to_repo_file_cmd, sudo=True)
+    Execute(params.key_cmd, sudo=True)
+    Execute(params.cache_cmd, sudo=True)
 
 
 def cdap_config(name=None):
     import params
     print('Setting up CDAP configuration for ' + name)
     # We're only setup for *NIX, for now
-    Directory(
-        params.etc_prefix_dir,
-        mode=755
-    )
+    
+    etc_dir = params.etc_prefix_dir
+    create_dir_cmd = ("/bin/mkdir", '-p', etc_dir)
+    chmod_dir_cmd = ("/bin/chmod", "755", etc_dir)
+    Execute(create_dir_cmd, sudo=True)
+    Execute(chmod_dir_cmd, sudo=True)
+
+#     Directory(
+#         params.etc_prefix_dir,
+#         mode=755
+#     )
 
     # Why don't we use Directory here? A: parameters changed between Ambari minor versions
     for i in params.cdap_conf_dir, params.log_dir, params.pid_dir:
-        Execute(
-            "mkdir -p %s && chown %s:%s %s" % (
-                i,
-                params.cdap_user,
-                params.user_group,
-                i
-            )
-        )
+        mkdir_dirs_cmd = ("mkdir", "-p", i)
+        user_grp_str = params.cdap_user + ":" + params.user_group
+        chown_dirs_cmd = ("chown", user_grp_str, i)
+        Execute(mkdir_dirs_cmd, sudo=True)
+        Execute(chown_dirs_cmd, sudo=True)
 
     for i in 'security', 'site':
         XmlConfig(
@@ -119,7 +128,8 @@ def cdap_config(name=None):
             content=Template("cdap_master_jaas.conf.j2")
         )
 
-    Execute("update-alternatives --install /etc/cdap/conf cdap-conf %s 50" % (params.cdap_conf_dir))
+    update_alternatives_cmd = ("update-alternatives", "--install", "/etc/cdap/conf", "cdap-conf", params.cdap_conf_dir, "50")
+    Execute(update_alternatives_cmd, sudo=True)
 
 
 def has_hive():
