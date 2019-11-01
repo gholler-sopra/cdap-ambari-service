@@ -30,8 +30,9 @@ def execute(configurations={}, parameters={}, host_name=None):
     if configurations is None:
         return (RESULT_STATE_UNKNOWN, ['There were no configurations supplied to the script.'])
     try:
-        check_cmd = format('service cdap-auth-server status')
-        Execute(check_cmd, timeout=5)
+        import params
+        check_cmd = format('/opt/cdap/security/bin/cdap auth-server status')
+        Execute(check_cmd, timeout=5, user=params.cdap_user)
         return(RESULT_STATE_OK, ['Auth Server OK - CDAP Auth Server is running'])
     except:
         return(RESULT_STATE_CRITICAL, [LOGGER_EXCEPTION_MESSAGE])

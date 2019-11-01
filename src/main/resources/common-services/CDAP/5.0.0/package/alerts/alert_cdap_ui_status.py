@@ -30,8 +30,9 @@ def execute(configurations={}, parameters={}, host_name=None):
     if configurations is None:
         return (RESULT_STATE_UNKNOWN, ['There were no configurations supplied to the script.'])
     try:
-        check_cmd = format('service cdap-ui status')
-        Execute(check_cmd, timeout=5)
+        import params
+        check_cmd = format('/opt/cdap/ui/bin/cdap ui status')
+        Execute(check_cmd, timeout=5, user=params.cdap_user)
         return(RESULT_STATE_OK, ['UI OK - CDAP UI is running'])
     except:
         return(RESULT_STATE_CRITICAL, [LOGGER_EXCEPTION_MESSAGE])

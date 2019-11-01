@@ -59,11 +59,13 @@ class Master(Script):
 
     def stop(self, env, upgrade_type=None):
         print('Stop the CDAP Master')
+        import params
         import status_params
-        daemon_cmd = format('service cdap-master stop')
+        daemon_cmd = format('/opt/cdap/master/bin/cdap master stop')
         no_op_test = format('ls {status_params.cdap_master_pid_file} >/dev/null 2>&1 && ps -p $(<{status_params.cdap_master_pid_file}) >/dev/null 2>&1')
         Execute(
             daemon_cmd,
+            user=params.cdap_user,
             only_if=no_op_test
         )
 
@@ -127,9 +129,11 @@ class Master(Script):
 
     def remove_jackson(self, env):
         jackson_check = format('ls -1 /opt/cdap/master/lib/org.codehaus.jackson* 2>/dev/null')
+        jackson_rm_cmd = ('rm', '-f', '/opt/cdap/master/lib/org.codehaus.jackson.jackson-*')
         Execute(
-            'rm -f /opt/cdap/master/lib/org.codehaus.jackson.jackson-*',
-            not_if=jackson_check
+            jackson_rm_cmd,
+            not_if=jackson_check,
+            sudo=True
         )
 
 if __name__ == "__main__":

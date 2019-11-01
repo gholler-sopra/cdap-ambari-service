@@ -50,10 +50,12 @@ class UI(Script):
     def stop(self, env, upgrade_type=None):
         print('Stop the CDAP UI')
         import status_params
-        daemon_cmd = format('service cdap-ui stop')
+        import params
+        daemon_cmd = format('/opt/cdap/ui/bin/cdap ui stop')
         no_op_test = format('ls {status_params.cdap_ui_pid_file} >/dev/null 2>&1 && ps -p $(<{status_params.cdap_ui_pid_file}) >/dev/null 2>&1')
         Execute(
             daemon_cmd,
+            user=params.cdap_user,
             only_if=no_op_test
         )
 
