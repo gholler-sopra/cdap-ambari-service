@@ -30,6 +30,8 @@ scripts_dir = package_dir + 'scripts/'
 distribution = platform.linux_distribution()[0].lower()
 hostname = config['hostname'].lower()
 java64_home = config['hostLevelParams']['java_home']
+#hostname = config['agentLevelParams']['hostname'].lower()
+#java64_home = config['ambariLevelParams']['java_home']
 user_group = config['configurations']['cluster-env']['user_group']
 
 hdp_version = helpers.get_hdp_version()
@@ -39,15 +41,17 @@ if distribution.startswith('debian') or distribution.startswith('ubuntu'):
     os_repo_dir = '/etc/apt/sources.list.d/'
     repo_file = 'cdap.list'
     package_mgr = 'apt-get'
-    key_cmd = "apt-key add %s/pubkey.gpg" % (files_dir)
-    cache_cmd = 'apt-get update'
+    key_cmd_str_part = files_dir + "/pubkey.gpg"
+    key_cmd = ("apt-key", "add", key_cmd_str_part)
+    cache_cmd = ('apt-get', 'update')
     repo_url = config['configurations']['cdap-env']['apt_repo_url']
 else:
     os_repo_dir = '/etc/yum.repos.d/'
     repo_file = 'cdap.repo'
     package_mgr = 'yum'
-    key_cmd = "rpm --import %s/pubkey.gpg" % (files_dir)
-    cache_cmd = 'yum --disablerepo=* --enablerepo=CDAP makecache'
+    key_cmd_str_part = files_dir + "/pubkey.gpg"
+    key_cmd = ("rpm", "--import", key_cmd_str_part)
+    cache_cmd = ('yum', '--disablerepo=*', '--enablerepo=CDAP', 'makecache')
     repo_url = config['configurations']['cdap-env']['yum_repo_url']
     gpgcheck_enabled = config['configurations']['cdap-env']['yum_gpgcheck_enabled']
 
@@ -106,6 +110,7 @@ else:
 # Get ZooKeeper variables
 zk_client_port = str(default('/configurations/zoo.cfg/clientPort', None))
 zk_hosts = config['clusterHostInfo']['zookeeper_hosts']
+#zk_hosts = config['clusterHostInfo']['zookeeper_server_hosts']
 zk_hosts.sort()
 cdap_zookeeper_quorum = helpers.generate_quorum(zk_hosts, zk_client_port) + '/' + root_namespace
 
@@ -130,3 +135,6 @@ if len(router_hosts) > 1:
 ui_hosts = config['clusterHostInfo']['cdap_ui_hosts']
 ui_hosts.sort()
 cdap_ui_host = ui_hosts[0]
+su_hdfs_user = '/bin/su hdfs'
+su_cdap_user = '/bin/su ' + cdap_user
+
