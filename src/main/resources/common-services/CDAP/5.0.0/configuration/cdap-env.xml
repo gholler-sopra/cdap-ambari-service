@@ -33,7 +33,7 @@
 
   <property>
     <name>yum_repo_url</name>
-    <value>http://artifacts.ggn.in.guavus.com:80/ggn-dev-rpms/cdap-build/5.1.208/release/</value>
+    <value>http://artifacts.ggn.in.guavus.com:80/ggn-dev-rpms/cdap-build/5.1.214/release/</value>
     <description>
       URL to a YUM repository hosting this version of CDAP. Defaults to
       the public Cask repository address
