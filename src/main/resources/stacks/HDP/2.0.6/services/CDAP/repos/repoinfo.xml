@@ -17,14 +17,14 @@
 <reposinfo>
   <os family="redhat6">
     <repo>
-      <baseurl>http://artifacts.ggn.in.guavus.com:80/ggn-dev-rpms/cdap-build/5.1.208/release/</baseurl>
+      <baseurl>http://artifacts.ggn.in.guavus.com:80/ggn-dev-rpms/cdap-build/5.1.214/release/</baseurl>
       <repoid>CDAP-5.1.208</repoid>
       <reponame>CDAP</reponame>
     </repo>
   </os>
   <os family="redhat7">
     <repo>
-      <baseurl>http://artifacts.ggn.in.guavus.com:80/ggn-dev-rpms/cdap-build/5.1.208/release/</baseurl>
+      <baseurl>http://artifacts.ggn.in.guavus.com:80/ggn-dev-rpms/cdap-build/5.1.214/release/</baseurl>
       <repoid>CDAP-5.1.208</repoid>
       <reponame>CDAP</reponame>
     </repo>
