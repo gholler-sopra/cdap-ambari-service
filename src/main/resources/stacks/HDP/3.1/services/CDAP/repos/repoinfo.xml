@@ -17,15 +17,15 @@
 <reposinfo>
   <os family="redhat6">
     <repo>
-      <baseurl>http://repository.cask.co/centos/6/x86_64/cdap/5.1</baseurl>
-      <repoid>CDAP-5.1</repoid>
+      <baseurl>RELEASE_PATH</baseurl>
+      <repoid>REPO_ID</repoid>
       <reponame>CDAP</reponame>
     </repo>
   </os>
   <os family="redhat7">
     <repo>
-      <baseurl>http://repository.cask.co/centos/6/x86_64/cdap/5.1</baseurl>
-      <repoid>CDAP-5.1</repoid>
+      <baseurl>RELEASE_PATH</baseurl>
+      <repoid>REPO_ID</repoid>
       <reponame>CDAP</reponame>
     </repo>
   </os>
