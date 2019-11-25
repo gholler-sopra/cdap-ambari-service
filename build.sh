@@ -21,6 +21,10 @@ setup() { mkdir -p build/var/lib/ambari-server/resources target; };
 
 install() {
   cp -a src/main/resources/* build/var/lib/ambari-server/resources
+  echo release_path: $RELEASE_PATH
+  echo version: $VERSION
+  echo build_number: $RELEASE
+  echo repo_id: $REPO_ID
   sed -i'' -e "s/RELEASE_PATH/${RELEASE_PATH}/g" \
     build/var/lib/ambari-server/resources/stacks/*/*/services/CDAP/repos/repoinfo.xml \
     build/var/lib/ambari-server/resources/common-services/CDAP/5.0.0/configuration/cdap-env.xml
