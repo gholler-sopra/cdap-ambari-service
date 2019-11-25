@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-PACKAGE_VERSION=${PACKAGE_VERSION:-5.1.0}
+VERSION=${VERSION:-5.1.0}
+RELEASE=${RELEASE:-1}
+RELEASE_PATH=${RELEASE_PATH:-http:\\/\\/repository.cask.co\\/centos\\/6\\/x86_64\\/cdap\\/5.1\\/}
+REPO_ID=CDAP-${VERSION}
+PACKAGE_VERSION=${VERSION:-5.1.0}
 PACKAGE_ITERATION=${PACKAGE_ITERATION:-1}
 PACKAGE_FORMATS=${PACKAGE_FORMATS:-deb rpm}
 
@@ -17,10 +21,15 @@ setup() { mkdir -p build/var/lib/ambari-server/resources target; };
 
 install() {
   cp -a src/main/resources/* build/var/lib/ambari-server/resources
-  sed -i'' -e "s/REPLACE_ME/${PACKAGE_VERSION}/g" \
-    build/var/lib/ambari-server/resources/stacks/*/*/services/CDAP/metainfo.xml \
-    build/var/lib/ambari-server/resources/common-services/CDAP/*/alerts.json \
-    build/var/lib/ambari-server/resources/common-services/CDAP/*/metainfo.xml
+  echo release_path: $RELEASE_PATH
+  echo version: $VERSION
+  echo build_number: $RELEASE
+  echo repo_id: $REPO_ID
+  sed -i'' -e "s/RELEASE_PATH/${RELEASE_PATH}/g" \
+    build/var/lib/ambari-server/resources/stacks/*/*/services/CDAP/repos/repoinfo.xml \
+    build/var/lib/ambari-server/resources/common-services/CDAP/5.0.0/configuration/cdap-env.xml
+  sed -i'' -e "s/REPO_ID/${REPO_ID}/g" \
+    build/var/lib/ambari-server/resources/stacks/*/*/services/CDAP/repos/repoinfo.xml
 }
 
 clean && setup && install
