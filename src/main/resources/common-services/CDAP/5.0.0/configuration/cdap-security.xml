@@ -102,7 +102,50 @@
       Keystore file type
     </description>
   </property>
+  
+  <!-- Auth server SSL -->
 
+  <property>
+    <name>security.auth.server.ssl.keystore.keypassword</name>
+    <value></value>
+    <property-type>PASSWORD</property-type>
+    <description>
+      Keystore key password
+    </description>
+    <value-attributes>
+      <type>password</type>
+      <empty-value-valid>true</empty-value-valid>
+    </value-attributes>
+  </property>
+
+  <property>
+    <name>security.auth.server.ssl.keystore.password</name>
+    <value></value>
+    <property-type>PASSWORD</property-type>
+    <description>
+      Keystore password
+    </description>
+    <value-attributes>
+      <type>password</type>
+      <empty-value-valid>true</empty-value-valid>
+    </value-attributes>
+  </property>
+
+  <property>
+    <name>security.auth.server.ssl.truststore.password</name>
+    <value></value>
+    <property-type>PASSWORD</property-type>
+    <description>
+      Truststore password
+    </description>
+    <value-attributes>
+      <type>password</type>
+      <empty-value-valid>true</empty-value-valid>
+    </value-attributes>
+  </property>
+
+  <!-- Auth server SSL over-->
+  
   <!-- UI SSL -->
 
   <property>
