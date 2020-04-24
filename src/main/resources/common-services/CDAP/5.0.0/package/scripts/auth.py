@@ -30,7 +30,8 @@ class Auth(Script):
         # Install any global packages
         self.install_packages(env)
         # Install package
-        helpers.package('cdap-security')
+        helpers.package('cdap-security-service')
+        helpers.add_symlink("/opt/cdap/security-service", "/opt/cdap/security")
         self.configure(env)
 
     def start(self, env, upgrade_type=None):
@@ -39,7 +40,7 @@ class Auth(Script):
         import status_params
         env.set_params(params)
         self.configure(env)
-        daemon_cmd = format('/opt/cdap/security/bin/cdap auth-server start')
+        daemon_cmd = format('/opt/cdap/security-service/bin/cdap auth-server start')
         no_op_test = format('ls {status_params.cdap_auth_pid_file} >/dev/null 2>&1 && ps -p $(<{status_params.cdap_auth_pid_file}) >/dev/null 2>&1')
         Execute(
             daemon_cmd,
@@ -51,7 +52,7 @@ class Auth(Script):
         print('Stop the CDAP Auth Server')
         import status_params
         import params
-        daemon_cmd = format('/opt/cdap/security/bin/cdap auth-server stop')
+        daemon_cmd = format('/opt/cdap/security-service/bin/cdap auth-server stop')
         no_op_test = format('ls {status_params.cdap_auth_pid_file} >/dev/null 2>&1 && ps -p $(<{status_params.cdap_auth_pid_file}) >/dev/null 2>&1')
         Execute(
             daemon_cmd,

@@ -31,7 +31,7 @@ def execute(configurations={}, parameters={}, host_name=None):
         return (RESULT_STATE_UNKNOWN, ['There were no configurations supplied to the script.'])
     try:
         #import params
-        check_cmd = format('/opt/cdap/security/bin/cdap auth-server status')
+        check_cmd = format('/opt/cdap/security-service/bin/cdap auth-server status')
         #Execute(check_cmd, timeout=5, user=params.cdap_user)
         Execute(check_cmd, timeout=5, user='cdap')
         return(RESULT_STATE_OK, ['Auth Server OK - CDAP Auth Server is running'])

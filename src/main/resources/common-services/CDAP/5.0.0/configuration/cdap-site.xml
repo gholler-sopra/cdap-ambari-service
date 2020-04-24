@@ -261,7 +261,7 @@
   <!-- Global Configuration -->
   <property>
     <name>bootstrap.file</name>
-    <value>/opt/cdap/master/bootstrap/distributed.json</value>
+    <value>/opt/cdap/master-service/bootstrap/distributed.json</value>
     <description>
       File that contains bootstrap steps that should be executed on a new CDAP instance as well
       as steps that should be executed on every restart of CDAP. Bootstrap steps include operations
@@ -315,7 +315,7 @@
 
   <property>
     <name>app.artifact.dir</name>
-    <value>/opt/cdap/master/artifacts</value>
+    <value>/opt/cdap/master-service/artifacts</value>
     <description>
       Semicolon-separated list of local directories scanned for system artifacts
       to add to the artifact repository
@@ -392,7 +392,7 @@
 
   <property>
     <name>app.program.runtime.extensions.dir</name>
-    <value>/opt/cdap/master/ext/runtimes</value>
+    <value>/opt/cdap/master-service/ext/runtimes</value>
     <description>
       Semicolon-separated list of local directories that are scanned for program runtime extensions
     </description>
@@ -1184,7 +1184,7 @@
 
  <property>
     <name>log.process.pipeline.config.dir</name>
-    <value>/opt/cdap/master/ext/logging/config</value>
+    <value>/opt/cdap/master-service/ext/logging/config</value>
     <description>
       A local directory on the CDAP Master that is scanned for log processing pipeline
       configurations. Each pipeline is defined by a file in the logback XML format, with
@@ -1217,7 +1217,7 @@
     <description>Semicolon-separated list of local directories on the CDAP Master scanned
       for additional library JAR files to be included for log processing</description>
     <display-name>Log Process Pipeline Library Directory</display-name>
-    <value>/opt/cdap/master/ext/logging/lib</value>
+    <value>/opt/cdap/master-service/ext/logging/lib</value>
  </property>
 
  <property>
@@ -2140,7 +2140,7 @@
 
   <property>
     <name>operational.stats.extensions.dir</name>
-    <value>/opt/cdap/master/ext/operations</value>
+    <value>/opt/cdap/master-service/ext/operations</value>
     <description>
       Semicolon-separated list of local directories on the CDAP Master
       that are scanned for operational statistics extensions
@@ -2159,7 +2159,7 @@
 
   <property>
     <name>runtime.extensions.dir</name>
-    <value>/opt/cdap/master/ext/runtimeproviders</value>
+    <value>/opt/cdap/master-service/ext/runtimeproviders</value>
     <description>
       Semicolon-separated list of local directories on the CDAP Master that
       are scanned for program runtime extensions

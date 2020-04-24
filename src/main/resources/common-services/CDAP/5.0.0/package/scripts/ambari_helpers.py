@@ -29,10 +29,29 @@ def create_hdfs_dir(path, owner, perms):
     Execute(chmod_cmd, user='hdfs')
 
 
+# def package(name):
+#     import params
+#     yum_cmd = (params.package_mgr, '--disablerepo=*', '--enablerepo=CDAP', 'install', '-y', name)
+#     Execute(yum_cmd, sudo=True)
+
 def package(name):
     import params
-    yum_cmd = (params.package_mgr, '--disablerepo=*', '--enablerepo=CDAP', 'install', '-y', name)
-    Execute(yum_cmd, sudo=True)
+    print("params.package_mgr:  " + params.package_mgr )
+    install_cmd = (params.package_mgr,)
+    if params.package_mgr == 'apt-get':
+        # FIXME how to disable/enable repo
+        install_cmd += ( 'install', '-y', name)
+    else:
+        install_cmd += ('--disablerepo=*', '--enablerepo=CDAP', 'install', '-y', name)
+    Execute(install_cmd, sudo=True)
+
+def fix_hive_conf_perms():
+    fix_cmd = ('chmod','-R', 'a+r', '/usr/hdp/current/hive-client/conf')
+    Execute(fix_cmd, sudo=True)
+
+def add_symlink(source, target):
+    ln_cmd = ('ln', '-nsf',  source , target)
+    Execute(ln_cmd, sudo=True)
 
 
 def add_repo(source, dest):

@@ -17,35 +17,42 @@
 <reposinfo>
   <os family="redhat6">
     <repo>
-      <baseurl>RELEASE_PATH</baseurl>
+      <baseurl>RPM_RELEASE_PATH</baseurl>
       <repoid>REPO_ID</repoid>
       <reponame>CDAP</reponame>
     </repo>
   </os>
   <os family="redhat7">
     <repo>
-      <baseurl>RELEASE_PATH</baseurl>
+      <baseurl>RPM_RELEASE_PATH</baseurl>
       <repoid>REPO_ID</repoid>
       <reponame>CDAP</reponame>
     </repo>
   </os>
   <os family="ubuntu12">
     <repo>
-      <baseurl>http://repository.cask.co/ubuntu/precise/amd64/cdap/5.1</baseurl>
+      <baseurl>DEB_RELEASE_PATH</baseurl>
       <repoid>CDAP-5.1</repoid>
       <reponame>CDAP</reponame>
     </repo>
   </os>
   <os family="ubuntu14">
     <repo>
-      <baseurl>http://repository.cask.co/ubuntu/precise/amd64/cdap/5.1</baseurl>
+      <baseurl>DEB_RELEASE_PATH</baseurl>
       <repoid>CDAP-5.1</repoid>
       <reponame>CDAP</reponame>
     </repo>
   </os>
   <os family="ubuntu16">
     <repo>
-      <baseurl>http://repository.cask.co/ubuntu/precise/amd64/cdap/5.1</baseurl>
+      <baseurl>DEB_RELEASE_PATH</baseurl>
+      <repoid>CDAP-5.1</repoid>
+      <reponame>CDAP</reponame>
+    </repo>
+  </os>
+  <os family="ubuntu18">
+    <repo>
+      <baseurl>DEB_RELEASE_PATH</baseurl>
       <repoid>CDAP-5.1</repoid>
       <reponame>CDAP</reponame>
     </repo>

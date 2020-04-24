@@ -32,9 +32,11 @@ class Master(Script):
         # Install any global packages
         self.install_packages(env)
         # Workaround for CDAP-3961
-        helpers.package('cdap-hbase-compat-2.0')
+        helpers.package('cdap-hbase-compat-2.0-service')
+        helpers.add_symlink("/opt/cdap/hbase-compat-2.0-service", "/opt/cdap/hbase-compat-2.0")
         # Install package
-        helpers.package('cdap-master')
+        helpers.package('cdap-master-service')
+        helpers.add_symlink("/opt/cdap/master-service", "/opt/cdap/master")
         self.configure(env)
 
     def start(self, env, upgrade_type=None):
@@ -50,9 +52,12 @@ class Master(Script):
         if params.cdap_hdfs_user != params.cdap_user:
             helpers.create_hdfs_dir('/user/' + params.cdap_hdfs_user, params.cdap_hdfs_user, 775)
 
+        # fix insufficient permissions for some files that cdap master needs to read at startup
+        helpers.fix_hive_conf_perms()
+
         # Hack to work around CDAP-1967
         self.remove_jackson(env)
-        daemon_cmd = format('/opt/cdap/master/bin/cdap master start')
+        daemon_cmd = format('/opt/cdap/master-service/bin/cdap master start')
         no_op_test = format('ls {status_params.cdap_master_pid_file} >/dev/null 2>&1 && ps -p $(<{status_params.cdap_master_pid_file}) >/dev/null 2>&1')
         Execute(
             daemon_cmd,
@@ -149,7 +154,7 @@ class Master(Script):
         print('Stop the CDAP Master')
         import params
         import status_params
-        daemon_cmd = format('/opt/cdap/master/bin/cdap master stop')
+        daemon_cmd = format('/opt/cdap/master-service/bin/cdap master stop')
         no_op_test = format('ls {status_params.cdap_master_pid_file} >/dev/null 2>&1 && ps -p $(<{status_params.cdap_master_pid_file}) >/dev/null 2>&1')
         Execute(
             daemon_cmd,
@@ -212,15 +217,15 @@ class Master(Script):
             label = classname
         print('Running: ' + label)
         import params
-        cmd = format("/opt/cdap/master/bin/cdap run %s %s" % (classname, arguments))
+        cmd = format("/opt/cdap/master-service/bin/cdap run %s %s" % (classname, arguments))
         Execute(
             cmd,
             user=params.cdap_user
         )
 
     def remove_jackson(self, env):
-        jackson_check = format('ls -1 /opt/cdap/master/lib/org.codehaus.jackson* 2>/dev/null')
-        jackson_rm_cmd = ('rm', '-f', '/opt/cdap/master/lib/org.codehaus.jackson.jackson-*')
+        jackson_check = format('ls -1 /opt/cdap/master-service/lib/org.codehaus.jackson* 2>/dev/null')
+        jackson_rm_cmd = ('rm', '-f', '/opt/cdap/master-service/lib/org.codehaus.jackson.jackson-*')
         Execute(
             jackson_rm_cmd,
             not_if=jackson_check,

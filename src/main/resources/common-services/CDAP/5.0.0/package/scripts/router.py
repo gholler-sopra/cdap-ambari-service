@@ -30,7 +30,8 @@ class Router(Script):
         # Install any global packages
         self.install_packages(env)
         # Install package
-        helpers.package('cdap-gateway')
+        helpers.package('cdap-gateway-service')
+        helpers.add_symlink("/opt/cdap/gateway-service", "/opt/cdap/gateway")
         self.configure(env)
 
     def start(self, env, upgrade_type=None):
@@ -39,7 +40,7 @@ class Router(Script):
         import status_params
         env.set_params(params)
         self.configure(env)
-        daemon_cmd = format('/opt/cdap/gateway/bin/cdap router start')
+        daemon_cmd = format('/opt/cdap/gateway-service/bin/cdap router start')
         no_op_test = format('ls {status_params.cdap_router_pid_file} >/dev/null 2>&1 && ps -p $(<{status_params.cdap_router_pid_file}) >/dev/null 2>&1')
         Execute(
             daemon_cmd,
@@ -51,7 +52,7 @@ class Router(Script):
         print('Stop the CDAP Router')
         import status_params
         import params
-        daemon_cmd = format('/opt/cdap/gateway/bin/cdap router stop')
+        daemon_cmd = format('/opt/cdap/gateway-service/bin/cdap router stop')
         no_op_test = format('ls {status_params.cdap_router_pid_file} >/dev/null 2>&1 && ps -p $(<{status_params.cdap_router_pid_file}) >/dev/null 2>&1')
         Execute(
             daemon_cmd,

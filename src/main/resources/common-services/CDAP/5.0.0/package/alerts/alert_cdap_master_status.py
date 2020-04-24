@@ -31,7 +31,7 @@ def execute(configurations={}, parameters={}, host_name=None):
         return (RESULT_STATE_UNKNOWN, ['There were no configurations supplied to the script.'])
     try:
         #import params
-        check_cmd = format('/opt/cdap/master/bin/cdap master status')
+        check_cmd = format('/opt/cdap/master-service/bin/cdap master status')
         #Execute(check_cmd, timeout=5, user=params.cdap_user)
         Execute(check_cmd, timeout=5, user='cdap')
         return(RESULT_STATE_OK, ['Master OK - CDAP Master is running'])
