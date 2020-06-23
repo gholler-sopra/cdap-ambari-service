@@ -43,6 +43,7 @@ if distribution.startswith('debian') or distribution.startswith('ubuntu'):
     key_cmd = ("apt-key", "add", key_cmd_str_part)
     cache_cmd = ('apt-get', 'update')
     repo_url = config['configurations']['cdap-env']['apt_repo_url']
+    gpgcheck_enabled = config['configurations']['cdap-env']['apt_gpgcheck_enabled']
 else:
     os_repo_dir = '/etc/yum.repos.d/'
     repo_file = 'cdap.repo'
@@ -77,6 +78,8 @@ if map_cdap_site['hdfs.namespace'] == '/${root.namespace}':
     hdfs_namespace = '/' + root_namespace
 else:
     hdfs_namespace = map_cdap_site['hdfs.namespace']
+
+
 
 cdap_security_enabled = config['configurations']['cdap-site']['security.enabled']
 cdap_access_logging = config['configurations']['cdap-logback']['access_logging']

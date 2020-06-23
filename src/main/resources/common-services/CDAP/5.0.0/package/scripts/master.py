@@ -50,6 +50,9 @@ class Master(Script):
         if params.cdap_hdfs_user != params.cdap_user:
             helpers.create_hdfs_dir('/user/' + params.cdap_hdfs_user, params.cdap_hdfs_user, 775)
 
+        # fix insufficient permissions for some files that cdap master needs to read at startup
+        helpers.fix_hive_conf_perms()
+
         # Hack to work around CDAP-1967
         self.remove_jackson(env)
         daemon_cmd = format('/opt/cdap/master/bin/cdap master start')

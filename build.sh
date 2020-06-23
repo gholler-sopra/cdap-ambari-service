@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
-VERSION=${VERSION:-5.1.0}
-RELEASE=${RELEASE:-1}
-RELEASE_PATH=${RELEASE_PATH:-http:\\/\\/repository.cask.co\\/centos\\/6\\/x86_64\\/cdap\\/5.1\\/}
+VERSION=${VERSION:-5.1.216}
+RELEASE=${RELEASE:-42}
+RPM_RELEASE_PATH=${RPM_RELEASE_PATH:-http:\\/\\/repository.cask.co\\/centos\\/6\\/x86_64\\/cdap\\/5.1\\/}
+DEB_RELEASE_PATH=${DEB_RELEASE_PATH:-http:\\/\\/master1.diane.com\\/repos\\/ubuntu18\\/cdap\\/5.1\\/}
 REPO_ID=CDAP-${VERSION}
 PACKAGE_VERSION=${VERSION:-5.1.0}
 PACKAGE_ITERATION=${PACKAGE_ITERATION:-1}
-PACKAGE_FORMATS=${PACKAGE_FORMATS:-deb rpm}
+PACKAGE_FORMATS=${PACKAGE_FORMATS:-deb}
 
 LICENSE="Copyright © 2015-2018 Cask Data, Inc. Licensed under the Apache License, Version 2.0."
 RPM_FPM_ARGS="-t rpm --rpm-os linux"
@@ -21,11 +22,15 @@ setup() { mkdir -p build/var/lib/ambari-server/resources target; };
 
 install() {
   cp -a src/main/resources/* build/var/lib/ambari-server/resources
-  echo release_path: $RELEASE_PATH
+  echo rpm release_path: $RPM_RELEASE_PATH
+  echo deb release_path: $DEB_RELEASE_PATH
   echo version: $VERSION
   echo build_number: $RELEASE
   echo repo_id: $REPO_ID
-  sed -i'' -e "s/RELEASE_PATH/${RELEASE_PATH}/g" \
+  sed -i'' -e "s/RPM_RELEASE_PATH/${RPM_RELEASE_PATH}/g" \
+    build/var/lib/ambari-server/resources/stacks/*/*/services/CDAP/repos/repoinfo.xml \
+    build/var/lib/ambari-server/resources/common-services/CDAP/5.0.0/configuration/cdap-env.xml
+  sed -i'' -e "s/DEB_RELEASE_PATH/${DEB_RELEASE_PATH}/g" \
     build/var/lib/ambari-server/resources/stacks/*/*/services/CDAP/repos/repoinfo.xml \
     build/var/lib/ambari-server/resources/common-services/CDAP/5.0.0/configuration/cdap-env.xml
   sed -i'' -e "s/REPO_ID/${REPO_ID}/g" \

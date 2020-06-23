@@ -19,8 +19,22 @@
 <configuration>
 
   <property>
+    <name>apt_gpgcheck_enabled</name>
+    <value>true</value>
+    <description>
+      Enable APT GPG signature check on repository packages
+    </description>
+    <display-name>APT GPG Check</display-name>
+    <value-attributes>
+      <type>boolean</type>
+      <overridable>false</overridable>
+    </value-attributes>
+  </property>
+
+
+  <property>
     <name>apt_repo_url</name>
-    <value>RELEASE_PATH</value>
+    <value>DEB_RELEASE_PATH</value>
     <description>
       URL to an APT repository hosting this version of CDAP. Defaults to
       the public Cask repository address
@@ -33,7 +47,7 @@
 
   <property>
     <name>yum_repo_url</name>
-    <value>RELEASE_PATH</value>
+    <value>RPM_RELEASE_PATH</value>
     <description>
       URL to a YUM repository hosting this version of CDAP. Defaults to
       the public Cask repository address
@@ -195,7 +209,8 @@ export AUTH_JAVA_HEAPMAX="-Xmx{{cdap_auth_heapsize}}"
 export KAFKA_JAVA_HEAPMAX="-Xmx{{cdap_kafka_heapsize}}"
 export MASTER_JAVA_HEAPMAX="-Xmx{{cdap_master_heapsize}}"
 export ROUTER_JAVA_HEAPMAX="-Xmx{{cdap_router_heapsize}}"
-export SPARK_HOME="/usr/hdp/{{hdp_version}}/spark"
+# as of HDP3.1, the directory naame is spark2
+export SPARK_HOME="/usr/hdp/{{hdp_version}}/spark2"
 {% if kerberos_enabled %}
 export OPTS="${OPTS} -Dhdp.version=${HDP_VERSION:-{{hdp_version}}} -Djava.security.auth.login.config={{master_jaas_config_file}}"
 {% else %}

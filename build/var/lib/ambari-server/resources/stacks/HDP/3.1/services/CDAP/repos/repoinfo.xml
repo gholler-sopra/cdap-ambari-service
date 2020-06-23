@@ -17,42 +17,42 @@
 <reposinfo>
   <os family="redhat6">
     <repo>
-      <baseurl>RPM_RELEASE_PATH</baseurl>
-      <repoid>REPO_ID</repoid>
+      <baseurl>http://repository.cask.co/centos/6/x86_64/cdap/5.1/</baseurl>
+      <repoid>CDAP-5.1.216</repoid>
       <reponame>CDAP</reponame>
     </repo>
   </os>
   <os family="redhat7">
     <repo>
-      <baseurl>RPM_RELEASE_PATH</baseurl>
-      <repoid>REPO_ID</repoid>
+      <baseurl>http://repository.cask.co/centos/6/x86_64/cdap/5.1/</baseurl>
+      <repoid>CDAP-5.1.216</repoid>
       <reponame>CDAP</reponame>
     </repo>
   </os>
   <os family="ubuntu12">
     <repo>
-      <baseurl>DEB_RELEASE_PATH</baseurl>
+      <baseurl>http://master1.diane.com/repos/ubuntu18/cdap/5.1/</baseurl>
       <repoid>CDAP-5.1</repoid>
       <reponame>CDAP</reponame>
     </repo>
   </os>
   <os family="ubuntu14">
     <repo>
-      <baseurl>DEB_RELEASE_PATH</baseurl>
+      <baseurl>http://master1.diane.com/repos/ubuntu18/cdap/5.1/</baseurl>
       <repoid>CDAP-5.1</repoid>
       <reponame>CDAP</reponame>
     </repo>
   </os>
   <os family="ubuntu16">
     <repo>
-      <baseurl>DEB_RELEASE_PATH</baseurl>
+      <baseurl>http://master1.diane.com/repos/ubuntu18/cdap/5.1/</baseurl>
       <repoid>CDAP-5.1</repoid>
       <reponame>CDAP</reponame>
     </repo>
   </os>
   <os family="ubuntu18">
     <repo>
-      <baseurl>DEB_RELEASE_PATH</baseurl>
+      <baseurl>http://master1.diane.com/repos/ubuntu18/cdap/5.1/</baseurl>
       <repoid>CDAP-5.1</repoid>
       <reponame>CDAP</reponame>
     </repo>
